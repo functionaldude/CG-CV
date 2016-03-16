@@ -90,6 +90,28 @@ int main(int argc, char** argv)
       //       3) Threshold the retrieved (normalized) gradient images using the parameter "edgeThreshold".
       //       4) Save the results in the cv::Mats below.
 
+      Mat images[3] = {img_r, img_g, img_b};
+      Mat edges[3] = {img_r_edge, img_g_edge, img_b_edge};
+      for (int i = 0; i < 3; ++i){
+        // Generate grad_x and grad_y
+        Mat grad_x, grad_y;
+
+        //gradient x
+        Sobel(images[i], grad_x, CV_32F, 1, 0);
+        //gradient y
+        Sobel(images[i], grad_y, CV_32F, 0, 1);
+
+        pow(grad_x, 2, grad_x);
+        pow(grad_y, 2, grad_y);
+        Mat combined = grad_x + grad_y;
+        sqrt(combined, combined);
+
+        double minVal, maxVal;
+        minMaxLoc(combined, &minVal, &maxVal); //find minimum and maximum intensities
+        combined.convertTo(combined, CV_8UC1, 255.0 / (maxVal - minVal), -minVal * 255.0 / (maxVal - minVal));
+        threshold(combined, edges[i], edge_threshold, 255.0, CV_8UC1);
+      }
+
       imwrite(out_r_edge_filename, img_r_edge);
       imwrite(out_g_edge_filename, img_g_edge);
       imwrite(out_b_edge_filename, img_b_edge);
