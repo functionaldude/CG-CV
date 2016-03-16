@@ -1,0 +1,12 @@
+{
+	"input_path": "./data/cathedral/",
+	"edge_threshold": 120,
+	"matching_window_size": 30,
+	"out_01_edges_B": "./output/cathedral/01_edgesB.png",
+	"out_01_edges_G": "./output/cathedral/01_edgesG.png",
+	"out_01_edges_R": "./output/cathedral/01_edgesR.png",
+	"out_02_warped_G": "./output/cathedral/02_warpedG.png",
+	"out_02_warped_B": "./output/cathedral/02_warpedB.png",
+	"out_03_combined": "./output/cathedral/03_output.png",
+	"out_04_cropped": "./output/cathedral/04_cropped.png"
+}

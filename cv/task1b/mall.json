@@ -1,0 +1,15 @@
+{
+"num_images": 5,
+"name_image": "mall",
+"image_path": "./data/mall/",
+"output_dir": "./output/mall/",
+"out_01_drago_raw": "./output/mall/01_drago_raw.png",
+"out_02_drago_tonemap": "./output/mall/02_drago_tonemap.png",
+"out_03_drago_hist_equal": "./output/mall/03_drago_hist_equal.png",
+"out_04_drago_filtered": "./output/mall/04_drago_filtered.png",
+"out_01_reinhard_raw": "./output/mall/01_reinhard_raw.png",
+"out_02_reinhard_tonemap": "./output/mall/02_reinhard_tonemap.png",
+"out_03_reinhard_hist_equal": "./output/mall/03_reinhard_hist_equal.png",
+"out_04_reinhard_filtered": "./output/mall/04_reinhard_filtered.png"
+}
+

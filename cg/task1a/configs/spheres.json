@@ -1,0 +1,81 @@
+{
+	"testcases": 
+	[
+		{
+			"name": "spheres",
+			"r_x": 800,
+			"r_y": 600,
+			"w_s": 0.028,
+			"f": 0.024,
+			"output": "spheres",
+			"viewbox": 
+			{
+				"from": 2.5,
+				"to": 7
+			},
+			"scene":
+			[
+				{
+					"sphere": 
+					{
+						"center" : 
+						{
+							"x" : -0.5,
+							"y" : -0.5,
+							"z" : -4
+						},
+						"radius" : 0.5
+					}
+				},
+				{
+					"sphere": 
+					{
+						"center" : 
+						{
+							"x" : 0,
+							"y" : 0,
+							"z" : -5
+						},
+						"radius" : 0.5
+					}
+				},
+				{
+					"sphere": 
+					{
+						"center" : 
+						{
+							"x" : 0.5,
+							"y" : 0.5,
+							"z" : -6
+						},
+						"radius" : 0.5
+					}
+				},
+				{
+					"sphere": 
+					{
+						"center" : 
+						{
+							"x" : 2,
+							"y" : -1,
+							"z" : -6
+						},
+						"radius" : 0.5
+					}
+				},
+				{
+					"sphere": 
+					{
+						"center" : 
+						{
+							"x" : -0.7,
+							"y" : 0.8,
+							"z" : -3.2
+						},
+						"radius" : 0.2
+					}
+				}
+			]
+		}
+	]
+}

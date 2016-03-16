@@ -1,0 +1,33 @@
+{
+	"testcases": 
+	[
+		{
+			"name": "sphere",
+			"r_x": 512,
+			"r_y": 512,
+			"w_s": 0.028,
+			"f": 0.024,
+			"output": "sphere",
+			"viewbox": 
+			{
+				"from": 2,
+				"to": 5
+			},
+			"scene":
+			[
+				{
+					"sphere": 
+					{
+						"center" : 
+						{
+							"x" : 0,
+							"y" : 0,
+							"z" : -3
+						},
+						"radius" : 1
+					}
+				}
+			]
+		}
+	]
+}

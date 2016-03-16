@@ -1,0 +1,12 @@
+{
+	"input_path": "./data/train/",
+	"edge_threshold": 90,
+	"matching_window_size": 40,
+	"out_01_edges_B": "./output/train/01_edgesB.png",
+	"out_01_edges_G": "./output/train/01_edgesG.png",
+	"out_01_edges_R": "./output/train/01_edgesR.png",
+	"out_02_warped_G": "./output/train/02_warpedG.png",
+	"out_02_warped_B": "./output/train/02_warpedB.png",
+	"out_03_combined": "./output/train/03_output.png",
+	"out_04_cropped": "./output/train/04_cropped.png"
+}

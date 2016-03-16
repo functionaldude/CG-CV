@@ -1,0 +1,50 @@
+{
+	"testcases": 
+	[
+		{
+			"name": "sphereandplane",
+			"r_x": 800,
+			"r_y": 600,
+			"w_s": 0.028,
+			"f": 0.024,
+			"output": "sphereandplane",
+			"viewbox": 
+			{
+				"from": 1,
+				"to": 6
+			},
+			"scene":
+			[
+				{
+					"sphere": 
+					{
+						"center" : 
+						{
+							"x" : 0,
+							"y" : 0,
+							"z" : -3
+						},
+						"radius" : 0.5
+					}
+				},
+				{
+					"plane": 
+					{
+						"point" : 
+						{
+							"x" : 0,
+							"y" : 0,
+							"z" : -3
+						},
+						"normal" : 
+						{
+							"x" : 1,
+							"y" : 1,
+							"z" : 1
+						}
+					}
+				}
+			]
+		}
+	]
+}
