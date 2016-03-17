@@ -10,8 +10,6 @@
 #include "opencv2/imgproc/imgproc.hpp"
 #include "opencv2/highgui/highgui.hpp"
 
-#include <omp.h>
-
 using namespace cv;
 using namespace std;
 
@@ -35,10 +33,6 @@ int main(int argc, char** argv)
     try
     {
       std::cout << "Running TC: " << argv[1] << std::endl;
-#pragma omp parallel for
-      for (int n = 0; n < 10; ++n) {
-        cout << " " << n << " ";
-      }
 
       rapidjson::Document cfg;
       FILE* fp = fopen(argv[1], "r");
@@ -140,7 +134,6 @@ int main(int argc, char** argv)
         for (int j = -match_window_size/2; j <= match_window_size/2; ++j) {
           double score_b_tmp = -100.0;
           double score_g_tmp = -100.0;
-#pragma omp parallel for
           for (int k = 0; k < img_r_edge.rows; ++k) {
             for (int l = 0; l < img_r_edge.cols; ++l) {
               score_g_tmp += img_r_edge.at<uchar>(k,l) / 255 * img_g_edge.at<uchar>(k+i,l+j)/255;
