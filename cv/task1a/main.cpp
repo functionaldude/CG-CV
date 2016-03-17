@@ -10,7 +10,10 @@
 #include "opencv2/imgproc/imgproc.hpp"
 #include "opencv2/highgui/highgui.hpp"
 
+#include <omp.h>
+
 using namespace cv;
+using namespace std;
 
 /**
     Prints the usage message to std::cout.
@@ -32,6 +35,10 @@ int main(int argc, char** argv)
     try
     {
       std::cout << "Running TC: " << argv[1] << std::endl;
+#pragma omp parallel for
+      for (int n = 0; n < 10; ++n) {
+        cout << " " << n << " ";
+      }
 
       rapidjson::Document cfg;
       FILE* fp = fopen(argv[1], "r");
@@ -106,9 +113,8 @@ int main(int argc, char** argv)
         Mat combined = grad_x + grad_y;
         sqrt(combined, combined);
 
-        double minVal, maxVal;
-        minMaxLoc(combined, &minVal, &maxVal); //find minimum and maximum intensities
-        combined.convertTo(combined, CV_8UC1, 255.0 / (maxVal - minVal), -minVal * 255.0 / (maxVal - minVal));
+        normalize(combined, combined, 0.0, 255.0, NORM_MINMAX);
+        combined.convertTo(combined, CV_8UC1);
         threshold(combined, edges[i], edge_threshold, 255.0, CV_8UC1);
       }
 
@@ -127,23 +133,101 @@ int main(int argc, char** argv)
         //          cv::Mats imgG_aligned and imgB_aligned respectively.
         // Note: The expected output images are of the same size as their untransformed original images.
         //
-        imwrite(out_g_transformed_filename, img_g_aligned);
-        imwrite(out_b_transformed_filename, img_b_aligned);
 
-        std::cout << "done." << std::endl;
+      int best_i_b, best_j_b, best_i_g, best_j_g;
+      double score_b = -100.0, score_g = -100.0;
+      for (int i = -match_window_size/2; i <= match_window_size/2; ++i) {
+        for (int j = -match_window_size/2; j <= match_window_size/2; ++j) {
+          double score_b_tmp = -100.0;
+          double score_g_tmp = -100.0;
+#pragma omp parallel for
+          for (int k = 0; k < img_r_edge.rows; ++k) {
+            for (int l = 0; l < img_r_edge.cols; ++l) {
+              score_g_tmp += img_r_edge.at<uchar>(k,l) / 255 * img_g_edge.at<uchar>(k+i,l+j)/255;
+              score_b_tmp += img_r_edge.at<uchar>(k,l) / 255 * img_b_edge.at<uchar>(k+i,l+j)/255;
+            }
+          }
+          if (score_b_tmp > score_b){
+            score_b = score_b_tmp;
+            best_i_b = i;
+            best_j_b = j;
+          }
+          if (score_g_tmp > score_g){
+            score_g = score_g_tmp;
+            best_i_g = i;
+            best_j_g = j;
+          }
+        }
+      }
 
-        std::cout << "Step 3 - combining images... ";
-        // TODO: Combine the three image channels into one single image. Mind the pixel format!
-        // Note: The expected image has the same dimensions as the reference channel (R).
-        //
-        imwrite(out_combined_image_filename, out);
-        std::cout << "done." << std::endl;
+      for (int x = 0; x < img_b.rows; ++x) {
+        for (int y = 0; y < img_b.cols; ++y) {
+          img_b_aligned.at<uchar>(x,y) = img_b.at<uchar>(x+best_i_b, y+best_j_b);
+        }
+      }
+      for (int x = 0; x < img_g.rows; ++x) {
+        for (int y = 0; y < img_g.cols; ++y) {
+          img_g_aligned.at<uchar>(x,y) = img_g.at<uchar>(x+best_i_g, y+best_j_g);
+        }
+      }
+      
+      imwrite(out_g_transformed_filename, img_g_aligned);
+      imwrite(out_b_transformed_filename, img_b_aligned);
 
-        std::cout << "Step 4 - cropping output image... ";
-        // TODO: Crop the above generated image s.t. only pixels defined in every channel (R, G, B) remain in the resulting
-        //       cropped output image.
-        imwrite(out_cropped_image_filename, out_cropped);
-        std::cout << "done." << std::endl;
+      std::cout << "done." << std::endl;
+
+      std::cout << "Step 3 - combining images... ";
+      // TODO: Combine the three image channels into one single image. Mind the pixel format!
+      // Note: The expected image has the same dimensions as the reference channel (R).
+      //
+
+      for (int x = 0; x < img_r.rows; ++x) {
+        for (int y = 0; y < img_r.cols; ++y) {
+          out.at<Vec3b>(x, y)[2] = img_r.at<uchar>(x, y);
+
+          if (img_b_aligned.rows > x && img_b_aligned.cols > y){
+            out.at<Vec3b>(x, y)[0] = img_b_aligned.at<uchar>(x, y);
+          } else {
+            out.at<Vec3b>(x, y)[0] = 0;
+          }
+
+          if (img_g_aligned.rows > x && img_g_aligned.cols > y){
+            out.at<Vec3b>(x, y)[1] = img_g_aligned.at<uchar>(x, y);
+          } else {
+            out.at<Vec3b>(x, y)[1] = 0;
+          }
+        }
+      }
+
+
+      imwrite(out_combined_image_filename, out);
+      std::cout << "done." << std::endl;
+
+      std::cout << "Step 4 - cropping output image... ";
+      // TODO: Crop the above generated image s.t. only pixels defined in every channel (R, G, B) remain in the resulting
+      //       cropped output image.
+
+      /*
+      int y = (best_j_b < best_j_g) ? (abs(best_j_b)) : (abs(best_j_g));
+      int x = (best_i_b < best_i_g) ? (abs(best_i_b)) : (abs(best_i_g));
+      int h = (img_g_aligned.rows - x < img_b_aligned.rows - x) ? (img_g_aligned.rows - x) : (img_b_aligned.rows - x);
+      int w = (img_g_aligned.cols - y < img_b_aligned.cols - y) ? (img_g_aligned.cols - y) : (img_b_aligned.cols - y);
+      Rect final1 = Rect(y,x,w,h);
+       */
+
+
+      Rect gBound1 = Rect(abs(best_j_g), abs(best_i_g), abs(img_g_aligned.cols-abs(best_j_g)), abs(img_g_aligned.rows-abs(best_i_g)));
+      Rect bBound1 = Rect(abs(best_j_b), abs(best_i_b), abs(img_b_aligned.cols-abs(best_j_b)), abs(img_b_aligned.rows-abs(best_i_b)));
+
+      Rect imgSize = Rect(0,0,out.cols,out.rows);
+
+      Rect final =  imgSize & gBound1 & bBound1;
+
+
+      out(final).copyTo(out_cropped);
+
+      imwrite(out_cropped_image_filename, out_cropped);
+      std::cout << "done." << std::endl;
     }
     catch (std::exception &ex)
     {
