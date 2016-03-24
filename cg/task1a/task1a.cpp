@@ -27,15 +27,27 @@ void render(const Scene1a& scene, surface<float>& output_image, float w_s, float
     std::cout<< "Rendering started. "<<std::endl;
     
     // TODO implement this function
-    
-    int r_x = output_image.width();
-    int r_y = output_image.height();
-    
-    for (int y = 0; y < r_y; y++)
-    {
-        for (int x = 0; x < r_x; x++)
-        {
-            output_image(x, y) = (x + y) / static_cast<float>(r_x + r_y);
+
+    float r_x = (float)output_image.width();
+    float r_y = (float)output_image.height();
+
+    float ratio = r_x / r_y;
+    float h_s = w_s / ratio;
+
+    float offset_w = w_s /  r_x;
+    float offset_h = h_s /  r_y;
+
+    float sp_x = (-w_s / 2.0f) + (offset_w / 2.0f); //start p x
+    float sp_y = (h_s / 2.0f)  - (offset_h / 2.0f); //start p y
+
+    for (int y = 0; y < r_y; y++) {
+        for (int x = 0; x < r_x; x++) {
+            float3 vec(sp_x + (offset_w * x), sp_y - offset_h * y, -f);
+            float distance;
+            
+            if (scene.intersectWithRay(normalize(vec), distance)) {
+                output_image(x, y) = distance;
+            }
         }
     }
 }
@@ -55,8 +67,11 @@ void render(const Scene1a& scene, surface<float>& output_image, float w_s, float
 bool intersectRaySphere(const float3& p, const float3& d, const float3& c, float r, float& t)
 {
     // TODO implement this function
-    
-    return false;
+    float3 q = p - c;
+    double disk = pow(dot(d, q), 2) - (dot(d, d) * (dot(q, q) - pow(r, 2)));
+    if (disk < 0) return false;
+    t = static_cast<float>((-1 * dot(d,q) - sqrt(disk)) / dot(d,d));
+    return true;
 }
 
 
@@ -74,6 +89,9 @@ bool intersectRaySphere(const float3& p, const float3& d, const float3& c, float
 bool intersectRayPlane(const float3& p, const float3& d, const float3& p_0, const float3& n, float& t)
 {
     // TODO implement this function
-    
-    return false;
+    float d2 = dot(p_0, n);
+    float dn = dot(d,n);
+    if (dn == 0) return false;
+    t =  ((-dot(p,n) - d2) / dn);
+    return true;
 }
