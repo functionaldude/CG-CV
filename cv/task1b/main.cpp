@@ -46,6 +46,15 @@ void hist_equal(Mat src, Mat &out) {
 
 	//--- default clip limit - DO NOT CHANGE THIS
 	const int clip_lim = 2;
+
+	cvtColor(src, out, CV_RGB2Lab);
+	auto clahe = createCLAHE(clip_lim);
+	vector<Mat> tmpVec;
+	split(out, tmpVec);
+
+	clahe->apply(tmpVec[0], tmpVec[0]);
+	merge(tmpVec, out);
+	cvtColor(out, out, CV_Lab2RGB);
 }
 
 //================================================================================
@@ -59,8 +68,15 @@ void hist_equal(Mat src, Mat &out) {
 //	- out: matrix which contains the merged image
 //================================================================================
 void merge_pics(Mat &out, vector<Mat> hdr_images) {
-
-
+	out = Mat::zeros(hdr_images[0].size(), CV_32FC3);
+	for (auto img : hdr_images) {
+		out += img;
+	}
+	out /= hdr_images.size();
+	cvtColor(out, out, CV_XYZ2RGB);
+	double minVal, maxVal;
+	minMaxLoc(out, &minVal, &maxVal);
+	out.convertTo(out, CV_8UC3, 255 / maxVal);
 }
 
 //================================================================================
@@ -115,8 +131,50 @@ void drago(vector<Mat> &hdr_images_out, vector<Mat> images) {
 	//--- default tone mapping parameters - DO NOT CHANGE THIS
 	const float LOG05 = -0.693147f;
 	const float bias = 0.99f;
+	const double biasP = log(bias) / LOG05;
+	const double eps = pow(10.0, -4.0);
 
+	for (auto image : images) {
+		Mat tmp;
+		image.convertTo(tmp, CV_32FC3, 1.0 / 255.0); // scale to 0-1
+		cvtColor(tmp, tmp, CV_RGB2XYZ);
+		vector<Mat> tmpVec;
+		split(tmp, tmpVec);
+		tmp = tmpVec[1].clone();
 
+		double sum = 0.0;
+		float y_max = 0.0;
+		for (int i = 0; i < tmp.rows; ++i) {
+			float *row = (float *) tmp.row(i).data;
+			for (int j = 0; j < tmp.cols; ++j) {
+				if (row[j] < eps) {
+					row[j] = (float) eps;
+				}
+				sum += log(row[j]);
+				y_max = max(y_max, row[j]);
+			}
+		}
+
+		double lav = exp(sum / (tmp.cols * tmp.rows));
+		double l_max = y_max / lav;
+		double div = log10(l_max + 1);
+
+		for (int i = 0; i < tmp.rows; ++i) {
+			float *row = (float *) tmp.row(i).data;
+			for (int j = 0; j < tmp.cols; ++j) {
+				row[j] = (float) (row[j] / lav);
+				double int_ij = log(2 + pow(row[j] / l_max, biasP) * 8);
+				double t_ij = (log(row[j] + 1) / int_ij) * (1 / div);
+				double s_ij = t_ij / row[j];
+				tmpVec[0].at<float>(i, j) *= s_ij;
+				tmpVec[1].at<float>(i, j) *= s_ij;
+				tmpVec[2].at<float>(i, j) *= s_ij;
+			}
+		}
+
+		merge(tmpVec, tmp);
+		hdr_images_out.push_back(tmp);
+	}
 }
 
 //================================================================================
@@ -201,6 +259,10 @@ int main(int argc, char *argv[]) {
 		//  - remember that the image has to be transformed in RGB colorspace and converted back
 		//	  into 8 bit 3 channel RGB image
 		//_______________________________________________________
+
+		cvtColor(hdr_images_out_drago[0], drago_raw, CV_XYZ2RGB);
+		drago_raw.convertTo(drago_raw, CV_8UC3, 255); // scale to 0-1
+
 		imwrite(out_drago_name_raw, drago_raw);
 
 		//_______________________________________________________
@@ -224,6 +286,8 @@ int main(int argc, char *argv[]) {
 		//	- use the 'drago_Hist_equal' image and perform a bilateral Filter on it
 		//	- use the defined parameters DIAMETER, SIGMACOLOR, SIGMASPACE for configuration
 		//_______________________________________________________
+
+		cv::bilateralFilter(drago_Hist_equal, drago_filtered, DIAMETER, SIGMACOLOR, SIGMASPACE);
 		imwrite(out_drago_name_filtered, drago_filtered);
 
 		cout << "calculating output with drago:       DONE" << endl;
