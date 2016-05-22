@@ -23,10 +23,6 @@ Triangle::Triangle(const math::float3& p1,
   cacheFaceNormal();
 }
 
-Triangle::~Triangle()
-{
-}
-
 void Triangle::cacheFaceNormal()
 {
   triangle_normal = normalize(cross(points[1] - points[0], 

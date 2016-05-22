@@ -1,0 +1,26 @@
+{
+  "testcases": [
+    {
+      "name": "cubes-antialiasing",
+      "width": 800,
+      "height": 600,
+      "output": "cubes-antialiasing",
+      "antialiasing": 4,
+      "scene": {
+        "file": "data/cubes.scene",
+        "light": {
+          "position": "-3 2.1 5",
+          "ambient": "0.1 0.1 0.1",
+          "intensities": "1 1 1"
+        }
+      },
+      "camera": {
+        "eye": "-5 4 10",
+        "up": "0 1 0",
+        "lookAt": "0 0.5 0",
+        "imagePlaneWidth": 35,
+        "focalLength": 50
+      }
+    }
+  ]
+}

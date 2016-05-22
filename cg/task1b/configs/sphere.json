@@ -1,0 +1,24 @@
+{
+  "testcases": [
+    {
+      "name": "sphere",
+      "width": 1920,
+      "height": 1080,
+      "output": "sphere",
+      "scene": {
+        "file": "data/sphere.scene",
+        "light": {
+          "position": "0 2 3",
+          "intensities": "1 1 1"
+        }
+      },
+      "camera": {
+        "eye": "-5 4 10",
+        "up": "0 1 0",
+        "lookAt": "0 0.5 0",
+        "imagePlaneWidth": 35,
+        "focalLength": 50
+      }
+    }
+  ]
+}

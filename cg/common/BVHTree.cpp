@@ -10,24 +10,20 @@ BVHTree::BVHTree()
 {
 }
 
-BVHTree::~BVHTree()
-{
-}
-
 void BVHTree::construct(std::vector<Triangle>& triangles, int leaf_size)
 {
   root = StrongNodePtr(new BVHTreeNode(&triangles[0], static_cast<int>(triangles.size()), leaf_size, test_leaf_nodes));
 }
 
-bool BVHTree::intersectRay(const Ray& ray, Intersection & intersection)
+bool BVHTree::intersectRay(const Ray &ray, Intersection &intersection) const
 {
   if (root)
   {
     float intersected_distance = std::numeric_limits<float>::max();
     const Triangle* intersected_triangle = 0;
     float2 barycentric;
-    bool intersected = intersectRay(ray, root.get(),
-      intersected_triangle, intersected_distance, barycentric);
+    bool intersected = intersectRay(ray, *root.get(),
+                                    intersected_triangle, intersected_distance, barycentric);
     if (intersected)
     {
       intersection.intersectedFace = (*intersected_triangle);

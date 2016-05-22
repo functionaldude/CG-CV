@@ -1,0 +1,102 @@
+{
+  "testcases": [
+    {
+      "name": "camera-pos1",
+      "width": 800,
+      "height": 600,
+      "output": "camera",
+      "scene": "cube",
+      "camera": {
+        "eye": "0 0 10",
+        "up": "0 1 0",
+        "lookAt": "0 0 0",
+        "imagePlaneWidth": 35,
+        "focalLength": 50
+      }
+    },
+    {
+      "name": "camera-pos1-up",
+      "width": 800,
+      "height": 600,
+      "output": "camera",
+      "scene": "cube",
+      "camera": {
+        "eye": "0 0 10",
+        "up": "-0.707107 0.707107 0",
+        "lookAt": "0 0 0",
+        "imagePlaneWidth": 35,
+        "focalLength": 50
+      }
+    },
+    {
+      "name": "camera-pos1-lookat",
+      "width": 800,
+      "height": 600,
+      "output": "camera",
+      "scene": "cube",
+      "camera": {
+        "eye": "0 0 10",
+        "up": "0 1 0",
+        "lookAt": "1 1 0",
+        "imagePlaneWidth": 35,
+        "focalLength": 50
+      }
+    },
+    {
+      "name": "camera-pos2",
+      "width": 800,
+      "height": 600,
+      "output": "camera",
+      "scene": "cube",
+      "camera": {
+        "eye": "-5 2 10",
+        "up": "0 1 0",
+        "lookAt": "0 0 0",
+        "imagePlaneWidth": 35,
+        "focalLength": 50
+      }
+    },
+    {
+      "name": "camera-pos2-lookat",
+      "width": 800,
+      "height": 600,
+      "output": "camera",
+      "scene": "cube",
+      "camera": {
+        "eye": "-5 2 10",
+        "up": "0 1 0",
+        "lookAt": "2 2 0",
+        "imagePlaneWidth": 35,
+        "focalLength": 50
+      }
+    },
+    {
+      "name": "camera-pos2-up",
+      "width": 800,
+      "height": 600,
+      "output": "camera",
+      "scene": "cube",
+      "camera": {
+        "eye": "-5 2 10",
+        "up": "-0.707107 0.707107 0",
+        "lookAt": "0 0 0",
+        "imagePlaneWidth": 35,
+        "focalLength": 50
+      }
+    },
+    {
+      "name": "camera-pos2-fov+",
+      "width": 800,
+      "height": 600,
+      "output": "camera",
+      "scene": "cube",
+      "camera": {
+        "eye": "-5 2 10",
+        "up": "0 1 0",
+        "lookAt": "0 0 0",
+        "imagePlaneWidth": 35,
+        "focalLength": 100
+      }
+    }
+  ]
+}

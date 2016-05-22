@@ -21,8 +21,6 @@ public:
     const math::float3& normal3,
     int material_index);
 
-  ~Triangle();
-
   void cacheFaceNormal();
 
   float minValueOnAxis(int axis) const;

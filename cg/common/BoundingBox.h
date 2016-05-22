@@ -11,6 +11,6 @@ public:
   BoundingBox(const float3& position, const float3& size);
   virtual ~BoundingBox();
 
-  bool intersectRay(const Ray& ray, float* t = 0) const;
+    bool intersectRay(const Ray &ray, float *t = 0, float3 *normal = 0) const;
 };
 

@@ -16,16 +16,13 @@ public:
   StrongNodePtrVector test_leaf_nodes;
 
   BVHTree();
-  virtual ~BVHTree();
 
   void construct(std::vector<Triangle>& triangles, int leaf_size);
 
-  bool intersectRay(const Ray& ray, Intersection& intersection);
+    bool intersectRay(const Ray &ray, Intersection &intersection) const;
 
 protected:
 
-  bool intersectRay(const Ray& ray, const BVHTreeNode* node,
-    const Triangle*& intersected_triangle, float& intersected_distance, 
-    float2& intersected_barycentric);
+    bool intersectRay(const Ray &ray, const BVHTreeNode &node, const Triangle *&triangle, float &t,
+                      float2 &barycentric) const;
 };
-

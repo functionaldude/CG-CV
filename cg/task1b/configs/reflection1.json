@@ -1,0 +1,25 @@
+{
+  "testcases": [
+    {
+      "name": "reflection1",
+      "width": 800,
+      "height": 600,
+      "output": "reflection1",
+      "scene": {
+        "file": "data/reflection1.scene",
+        "light": {
+          "position": "0 2 3",
+          "intensities": "1 1 1",
+          "ambient": "0.1 0.1 0.1"
+        }
+      },
+      "camera": {
+        "eye": "-2 2 5",
+        "up": "0 1 0",
+        "lookAt": "0 0.5 0",
+        "imagePlaneWidth": 1,
+        "focalLength": 0.8
+      }
+    }
+  ]
+}
